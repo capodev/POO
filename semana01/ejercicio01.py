@@ -101,4 +101,4 @@ miembro_premium.prestar_libro(libro_digital1)  # Préstamo exitoso.
 print("\n--- Información de libro digital ---")
 libro_digital1.mostrar_info()
 # este es un ejemplo sencillo de como aplicar los principios de la POO
-# por Felix Jimenez Tecnologo en software xd, haria mas pero al ser una prueba me da peresita xd
+# por Felix Jimenez , haria mas pero al ser una prueba me da peresita xd
