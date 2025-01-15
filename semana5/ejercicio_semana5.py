@@ -40,3 +40,5 @@ except ValueError:
     print("Error: Por favor, ingresa valores numéricos válidos.")
 
 print("Gracias por usar el programa.")
+
+#jejeje se me paso la hora :c
