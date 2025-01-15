@@ -122,3 +122,4 @@ if __name__ == "__main__":
     sistema.mostrar_habitaciones_disponibles()
 
     # Para este ejemplo mostramos las habitaciones, reservamos una, mostramos habitaciones, cancelamos la reserva y mostramos habitaciones nuevamente.
+    #jejeje
