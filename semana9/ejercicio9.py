@@ -1,7 +1,7 @@
-# aqui tenemos la clase producto con sus respectivos getter y setters para acceder a los atributos de la clase producto
-# luego tenemos la clase inventario que tiene una lista de productos y metodos para añadir, eliminar, actualizar, buscar y mostrar productos
+import os
+
+
 class Producto:
-    # la clase producto tiene un constructor que recibe los atributos id_producto, nombre, cantidad y precio
     def __init__(self, id_producto, nombre, cantidad, precio):
         self.__id_producto = id_producto
         self.__nombre = nombre
@@ -27,15 +27,39 @@ class Producto:
         self.__precio = precio
 
     def __str__(self):
-        return f"ID: {self.__id_producto}, Nombre: {self.__nombre}, Cantidad: {self.__cantidad}, Precio: ${self.__precio:.2f}"
+        return f"{self.__id_producto},{self.__nombre},{self.__cantidad},{self.__precio}"
+
+    @staticmethod
+    def from_string(producto_str):
+        id_producto, nombre, cantidad, precio = producto_str.strip().split(',')
+        return Producto(id_producto, nombre, int(cantidad), float(precio))
 
 
 class Inventario:
-    # la clase inventario tiene un constructor que inicializa una lista vacia de productos
-
-    def __init__(self):
+    def __init__(self, archivo="inventario.txt"):
         self.__productos = []
-# metodo para añadir un producto a la lista de productos, recibe los atributos id_producto, nombre, cantidad y precio
+        self.__archivo = archivo
+        self.cargar_desde_archivo()
+
+    def guardar_en_archivo(self):
+        try:
+            with open(self.__archivo, 'w') as f:
+                for producto in self.__productos:
+                    f.write(str(producto) + "\n")
+        except PermissionError:
+            print("Error: No se tienen permisos para escribir en el archivo.")
+
+    def cargar_desde_archivo(self):
+        if not os.path.exists(self.__archivo):
+            open(self.__archivo, 'w').close()
+            return
+        try:
+            with open(self.__archivo, 'r') as f:
+                self.__productos = [Producto.from_string(line) for line in f]
+        except FileNotFoundError:
+            print("Archivo no encontrado, iniciando con inventario vacío.")
+        except Exception as e:
+            print(f"Error al cargar inventario: {e}")
 
     def añadir_producto(self, id_producto, nombre, cantidad, precio):
         if any(p.get_id_producto() == id_producto for p in self.__productos):
@@ -43,12 +67,14 @@ class Inventario:
             return
         nuevo_producto = Producto(id_producto, nombre, cantidad, precio)
         self.__productos.append(nuevo_producto)
-        print("Producto añadido con éxito.")
+        self.guardar_en_archivo()
+        print("Producto añadido con éxito al Inventario.")
 
     def eliminar_producto(self, id_producto):
         self.__productos = [
             p for p in self.__productos if p.get_id_producto() != id_producto]
-        print("Producto eliminado si existía.")
+        self.guardar_en_archivo()
+        print("Producto eliminado si existía en el Inventario.")
 
     def actualizar_producto(self, id_producto, cantidad=None, precio=None):
         for producto in self.__productos:
@@ -57,14 +83,15 @@ class Inventario:
                     producto.set_cantidad(cantidad)
                 if precio is not None:
                     producto.set_precio(precio)
-                print("Producto actualizado.")
+                self.guardar_en_archivo()
+                print("Producto actualizado en el Inventario.")
                 return
-        print("Producto no encontrado.")
+        print("Producto no encontrado en el Inventario.")
 
     def buscar_por_nombre(self, nombre):
         encontrados = [
             p for p in self.__productos if nombre.lower() in p.get_nombre().lower()]
-        return encontrados if encontrados else "No se encontraron productos."
+        return encontrados if encontrados else "No se encontraron productos en el Inventario."
 
     def mostrar_productos(self):
         if not self.__productos:
@@ -73,13 +100,10 @@ class Inventario:
             for producto in self.__productos:
                 print(producto)
 
-# menu para interactuar con el inventario
-
 
 def menu():
     inventario = Inventario()
     while True:
-        # menu con las opciones para interactuar con el inventario
         print("\n1. Añadir Producto")
         print("2. Eliminar Producto")
         print("3. Actualizar Producto")
